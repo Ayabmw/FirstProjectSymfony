@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Form\BookType;
+use App\Repository\BookRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -47,6 +48,23 @@ class BookController extends AbstractController
         ['maliste'=>$books]);
         //return $this->render('author/showauthor.html.twig', ['ida'=>$id]);
     }
+    #[Route('/book/published', name: 'app_published_book')]
+public function getPublished(ManagerRegistry $doctrine): Response
+{
+    $repo = $doctrine->getRepository(Book::class);
+    $books = $repo->findBy(['published' => true]);
+
+    $nb1 = count($books);
+    $nb2 = count (['published' => false]);
+    return $this->render('book/listbook.html.twig', [
+        'maliste' => $books,
+        'nbpub' => $nb1,
+        'nbna' => $nb2,
+    ]);
+}
+
+    
+
 
     #[Route("/book/{ref}/edit", name:"edit_book")]
     public function editBook(Request $request, Book $book): Response
@@ -89,6 +107,7 @@ public function deleteBook($ref): Response
     // Redirigez vers la liste des livres après la suppression
     return $this->redirectToRoute('listbook.html.twig');
 }
+
 #[Route("/books/{ref}", name: "show_book")]
 public function showBook(Book $book): Response
     {
@@ -96,7 +115,30 @@ public function showBook(Book $book): Response
             'book' => $book,
         ]);
     }
-}  
+    #[Route('/books-by-title/{title}', name: 'app_booksByTitle')]
+    public function booksByTitle( BookRepository $bookRepository, string $title)
+    {
+        // Rechercher les livres par titre
+        $books = $bookRepository->findBy(['title' => $title]);
+    
+        return $this->render('book/show.html.twig', [
+            'title' => $title,  // Passer le titre à la vue
+            'books' => $books,
+        ]);
+    }
+    #[Route("/searchBook", name: "app_search_books")]
+    public function searchBooks(Request $request, BookRepository $bookRepository): Response
+    {
+        $searchTerm = $request->query->get('search');
+
+        // Utilisez la méthode searchBookByRef du repository pour récupérer le livre par la référence
+        $books = $bookRepository->searchBookByRef($searchTerm);
+
+        return $this->render('book/listbook.html.twig', [
+            'maliste' => $books,
+        ]);
+    }
+}
 
 
 

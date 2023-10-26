@@ -1,15 +1,34 @@
-{% set nb=0 %}
-<ul>
-{% for a in maliste %}
-    {% set nb=nb+a.nb_books %}
-    <li>{{ a.id }} - {{ a.username | upper }} - 
-    <img src="{{ asset(a.picture) }}">
-    <a href="{{ path('app_details_author', {'id': a.id}) }}">Details</a>
-    </li>
-{% endfor %}
-</ul>
+{# authors_by_email.html.twig #}
 
-Le nombre d'auteurs est : {{ maliste | length }}
-<br>
-Le nombre total de livres est : {{ nb }}
+<form method="get" action="{{ path('search_authors') }}">
+    <label for="minBooks">Nombre minimum de livres :</label>
+    <input type="number" id="minBooks" name="minBooks" min="0"><br>
+
+    <label for="maxBooks">Nombre maximum de livres :</label>
+    <input type="number" id="maxBooks" name="maxBooks" min="0"><br>
+
+    <button type="submit">Rechercher</button>
+</form>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+    {% for author in maliste %}
+        <tr>
+            <td>{{ author.id }}</td>
+            <td>{{ author.username | upper }}</td>
+            <td>{{ author.email }}</td>
+            <td>
+                <a href="{{ path('app_details_author', {'id': author.id}) }}">Details</a>
+                <a href="{{ path('app_edit_author', {'id': author.id}) }}">Edit</a>
+                <a href="{{ path('app_delete_author', {'id': author.id}) }}" onclick="return confirm('Are you sure you want to delete this author?')">Delete</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+
 

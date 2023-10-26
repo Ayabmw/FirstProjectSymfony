@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,52 +5,86 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-     <style>
+
+    <style>
         .centered-title {
             text-align: center;
         }
-    </style>
-    <style>
+
         .centered-table {
-            margin: 0 auto; /* This centers the element horizontally */
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
-    <h1 class="centered-title" > List of Books </h1>
- 
-    
+    <h1 class="centered-title">List of Books</h1>
+    <form action="{{ path('app_search_books') }}" method="GET">
+    <input type="text" name="search" placeholder="Rechercher par référence">
+    <button type="submit">Rechercher</button>
+</form>
     <table class="centered-table" border="1">
-        <tr>
-            <th>ref</th>
-            <th>Title</th>
-            <th>AuteurName</th>
-            <th>Category</th>
-            <th>Published</th>
-            <th>Published Date </th>
-                        <th>Actions</th>
-                        
+        <thead>
+            <tr>
+                <th>Reference</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Published</th>
+                <th>Publication Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in maliste %}
+                <tr>
+                    <td>{{ b.ref | upper }}</td>
+                    <td>{{ b.title }}</td>
+                    <td>{{ b.IdAuthor.username }}</td>
+                    <td>{{ b.category }}</td>
+                    <td>{{ b.published ? 'Yes' : 'No' }}</td>
+                    <td>{{ b.publicationDate | date('Y-m-d H:i:s') }}</td>
 
-        </tr>
-        {% for b in maliste %}
-        <tr>
-        <td>{{b.ref | upper}}</td>
-        <td>{{b.Title}}</td>
-        <td>{{b.IdAuthor.username}}</td>
-        <td>{{b.category}}</td>
-        <td>{{b.published ? 'Yes' : 'No' }}</td>
-        <td>{{b.publicationDate|date('Y-m-d H:i:s')}}</td>
-        <td><a href="{{ path('edit_book', {'ref': b.ref}) }}">Edit</a></td> <!-- Lien "edit" -->
-        <td><a href="{{ path('delete_book', {'ref': b.ref}) }}" onclick="return confirm('Are you sure you want to delete this book?')">
-        Delete</a></td> <!-- Lien "delete" -->
-        <td><a href="{{ path('show_book', {'ref': b.ref}) }}">Show</a></td> 
-    
+                    <td>
+                        <a href="{{ path('edit_book', {'ref': b.ref}) }}">Edit</a>
+                    </td>
 
-        </tr>
-        {% else %}
-        <h1>Tableau Vide</h1>
-        {% endfor %}   
+                    <td>
+                        <a href="{{ path('delete_book', {'ref': b.ref}) }}" onclick="return confirm('Are you sure you want to delete this book?')">
+                            Delete
+                        </a>
+                    </td>
+
+                    <td>
+                        <a href="{{ path('show_book', {'ref': b.ref}) }}">Show</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            {% if maliste is empty %}
+                <tr>
+                    <td colspan="7">No books found</td>
+                </tr>
+            {% endif %}
+        </tbody>
     </table>
 
+    {% if nbpub is defined and nbpub > 0 %}
+        <p>Number of published books: {{ nbpub }}</p>
+    {% else %}
+        <p>No published books.</p>
+    {% endif %}
+
+    {% if nbnot is defined and nbnot > 0 %}
+        <p>Number of unpublished books: {{ nbnot }}</p>
+    {% else %}
+        <p>No unpublished books.</p>
+    {% endif %}
+    <div class="container">
+    <div class="row">
+        <div class="col-12">
+            <a href="{{ path('app_AddBook') }}" class="btn btn-primary">Create New</a>
+        </div>
+    </div>
+</div>
 </body>
 </html>

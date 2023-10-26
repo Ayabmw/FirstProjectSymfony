@@ -2,6 +2,7 @@
 
 <h1>Details for Book</h1>
 
+
 <p><strong>Ref:</strong> {{ book.ref }}</p>
 <p><strong>Title:</strong> {{ book.Title }}</p>
 <p><strong>Author:</strong> {{ book.IdAuthor.username }}</p>
@@ -9,3 +10,5 @@
 <p><strong>Published:</strong> {{ book.published ? 'Yes' : 'No' }}</p>
 <p><a href="{{ path('edit_book', {'ref': book.ref}) }}">Edit</a></p>
 <!-- ... other details ... -->
+<h1>{{ book.title }}</h1>
+

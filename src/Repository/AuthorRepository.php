@@ -20,6 +20,13 @@ class AuthorRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Author::class);
     }
+    public function listAuthorByEmail()
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.email', 'ASC') // Triez par adresse email par ordre alphabétique (ASC)
+            ->getQuery()
+            ->getResult();
+    }
 
 //    /**
 //     * @return Author[] Returns an array of Author objects
